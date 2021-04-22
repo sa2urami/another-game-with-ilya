@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "contro": "./contro.js",
+    "lodash": "./lodash.js",
+    "vec3": "./vec3.js"
+  }
+}

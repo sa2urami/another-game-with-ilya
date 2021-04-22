@@ -76,19 +76,19 @@ const getTriangles = (blockPosition) => {
     ]
   };
   const blockSidesTriangles = _.mapValues(blockSidesArr, (squareCoordinatesArr) => {
-    const squareCoordinate = squareCoordinatesArr.map((coordinateArr) => {
+    const squareCoordinates = squareCoordinatesArr.map((coordinateArr) => {
       const point = vec3(...coordinateArr);
       point.add(blockPosition);
       return point;
     });
-    const triangles2 = [
-      squareCoordinate.slice(0, -1),
+    const triangles = [
+      squareCoordinates.slice(0, -1),
       [
-        ...squareCoordinate.slice(2),
-        squareCoordinate[0]
+        ...squareCoordinates.slice(2),
+        squareCoordinates[0]
       ]
     ].map((triangleCoordinates) => new Triangle(triangleCoordinates));
-    return triangles2;
+    return triangles;
   });
   return blockSidesTriangles;
 };
@@ -140,7 +140,7 @@ const recalculateMesh = () => {
   for (const block of blocks) {
     const sideTriangles = getTriangles(block.position);
     const blockColor = (block.position.x + block.position.z % 2) % 2 === 0 ? [1, 0, 0] : [0, 1, 0];
-    for (const [side, triangles2] of entries(sideTriangles)) {
+    for (const [side, triangles] of entries(sideTriangles)) {
       const siblingBlockPos = block.position.clone();
       const [componentAdd, valueToAdd] = blockSideToCoordinateMap[side];
       mapVector(siblingBlockPos, (value, _index, component) => {
@@ -151,7 +151,7 @@ const recalculateMesh = () => {
       const siblingBlockExists = doesBlockExist(siblingBlockPos);
       if (!siblingBlockExists)
         mesh.push({
-          triangles: triangles2,
+          triangles,
           color: blockColor
         });
     }
@@ -207,6 +207,13 @@ export const physicsUpdate = () => {
     moveCamera(vec3(-Math.cos(rz), 0, -Math.sin(rz)), movement.x > 0);
   }
 };
+const drawCrosshair = (gl) => {
+  const vert = [
+    -2e-3,
+    -1e-3,
+    2e-3
+  ];
+};
 const drawTriangles = (gl, points, method = "fill") => {
   const triangles2dPoints = points.map(({x, y}) => [x, y]);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangles2dPoints.flat()), gl.STATIC_DRAW);
@@ -229,10 +236,10 @@ export const render = (gl, shaderProgram) => {
   gl.clearColor(0, 0, 0, 0);
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.uniform4f(colorUniformLocation, 1, 0, 0, 1);
-  for (const {triangles: triangles2, color} of mesh) {
+  for (const {triangles, color} of mesh) {
     gl.uniform4f(colorUniformLocation, ...color, 1);
     triangle:
-      for (const triangle of triangles2) {
+      for (const triangle of triangles) {
         if (triangle.normal.x * (triangle.points[0].x - camera.x) + triangle.normal.y * (triangle.points[0].y - camera.y) + triangle.normal.z * (triangle.points[0].z - camera.z) >= 0)
           continue;
         let {points} = triangle;
@@ -251,5 +258,6 @@ export const render = (gl, shaderProgram) => {
         drawTriangles(gl, points);
       }
   }
-  triangles.innerText = drawedTriangles;
+  drawCrosshair(gl);
+  document.getElementById("triangles").innerText = drawedTriangles.toString();
 };

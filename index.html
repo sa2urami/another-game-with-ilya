@@ -29,21 +29,21 @@
             padding: 2px;
         }
 
-        #fps::before,
-        #resolution::before {
-            padding-right: 5px;
+        .stats span::before {
+            content: attr(id) ": ";
+            text-transform: uppercase;
         }
 
-        #fps::before {
-            content: "FPS: ";
+        #mobile_controls {
+            position: fixed;
+            right: 0;
+            bottom: 0;
         }
 
-        #resolution::before {
-            content: "RESOLUTION: ";
-        }
-
-        #triangles::before {
-            content: "TRIANGLES: ";
+        #mobile_controls img {
+            background: gray;
+            width: 50px;
+            height: 50px;
         }
     </style>
 </head>
@@ -55,10 +55,14 @@
         <span id="triangles"></span>
     </div>
     <canvas id="canvas"></canvas>
-    <div id="debugElem"
-        style="position: fixed;right: 0;top: 0;width: 400px;overflow: auto;font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;font-size: 1em;white-space: pre-line;">
-    </div>
-    <div id="mousePos" style="position: fixed;top: 0;left: 0;"></div>
+    <div id="root"></div>
+    <script>
+        // mobile_controls.hidden = !(
+        //     ('ontouchstart' in window) ||
+        //     (navigator.maxTouchPoints > 0) ||
+        //     (navigator.msMaxTouchPoints > 0)
+        // );
+    </script>
     <script type="module" src="index.js"></script>
 </body>
 

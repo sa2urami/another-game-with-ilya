@@ -6,7 +6,7 @@ export const mapVector = (vector, callback) => {
   vector.update(vec3(...newArray));
 };
 export const debug = (str) => {
-  debugElem.insertAdjacentText("beforeend", str + "\n");
+  console.log(str);
 };
 export const entries = (obj) => {
   return Object.entries(obj);
